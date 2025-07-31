@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>منصة المعهد العالي للتعاون الزراعي</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0; padding: 0;
+    font-family: 'Cairo', sans-serif;
+    background: linear-gradient(135deg, #1f2937, #4b5563);
+    color: #f9fafb;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    background: linear-gradient(90deg, #0f2027, #203a43, #2c5364);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #e0e0e0;
+  }
+  header h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.25rem;
+  }
+  #logoutBtn {
+    cursor: pointer;
+    background: #ef4444;
+    border: none;
+    padding: 0.5rem 1rem;
+    color: white;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background 0.3s ease;
+  }
+  #logoutBtn:hover {
+    background: #b91c1c;
+  }
+  main {
+    flex-grow: 1;
+    padding: 1rem;
+    max-width: 900px;
+    margin: 1rem auto;
+    background: rgba(31, 41, 55, 0.85);
+    border-radius: 10px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.7);
+  }
+  section {
+    display: none;
+  }
+  section.active {
+    display: block;
+  }
+  .btn {
+    background: #3b82f6;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    color: white;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  .btn:hover {
+    background: #2563eb;
+  }
+  input, textarea {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    margin: 0.5rem 0 1rem 0;
+    border-radius: 6px;
+    border: none;
+    font-size: 1rem;
+    font-family: 'Cairo', sans-serif;
+  }
+  input[type="file"] {
+    padding: 0.3rem 1rem;
+  }
+  label {
+    font-weight: 600;
+    margin-top: 1rem;
+    display: block;
+  }
+  /* Chat styles */
+  .chat-container {
+    max-height: 320px;
+    overflow-y: auto;
+    background: #111827;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    color: white;
+    font-size: 0.9rem;
+  }
+  .message {
+    padding: 8px 12px;
+    border-radius: 15px;
+    margin-bottom: 8px;
+    max-width: 75%;
+    position: relative;
+    word-wrap: break-word;
+  }
+  .message.admin {
+    background: #d1d5db;
+    color: #111827;
+    align-self: flex-start;
+  }
+  .message.student {
+    background: #2563eb;
+    color: white;
+    align-self: flex-end;
+  }
+  .message .time {
+    font-size: 10px;
+    color: #6b7280;
+    position: absolute;
+    bottom: -15px;
+    right: 10px;
+  }
+  .chat-box {
+    display: flex;
+    flex-direction: column;
+  }
+  /* List items */
+  .post-item {
+    background: #374151;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #e5e7eb;
+  }
+  .post-content {
+    max-width: 85%;
+    word-wrap: break-word;
+  }
+  .post-actions button {
+    background: transparent;
+    border: none;
+    color: #ef4444;
+    font-size: 1.25rem;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: color 0.2s ease;
+  }
+  .post-actions button:hover {
+    color: #b91c1c;
+  }
+  video, img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin-top: 0.5rem;
+  }
+  a.download-link {
+    color: #3b82f6;
+    text-decoration: underline;
+  }
+  /* Tabs */
+  nav.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  nav.tabs button {
+    background: #374151;
+    color: #9ca3af;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  nav.tabs button.active {
+    background: #3b82f6;
+    color: white;
+  }
+  nav.tabs button:hover:not(.active) {
+    background: #4b5563;
+  }
+  /* Responsive */
+  @media (max-width: 600px) {
+    main {
+      margin: 0.5rem;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .post-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .post-actions {
+      margin-top: 0.5rem;
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+    }
+  }
+  /* Login/Register */
+  #authSection {
+    max-width: 400px;
+    margin: 3rem auto;
+    background: rgba(31, 41, 55, 0.85);
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 0 12px rgba(0,0,0,0.7);
+  }
+  #authSection h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+  }
+  #authSection p.toggle-text {
+    margin-top: 1rem;
+    text-align: center;
+    color: #93c5fd;
+    cursor: pointer;
+    user-select: none;
+  }
+  #authSection p.toggle-text:hover {
+    text-decoration: underline;
+  }
+  /* Error message */
+  .error-msg {
+    background: #b91c1c;
+    padding: 0.5rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>منصة المعهد العالي للتعاون الزراعي</h1>
+  <button id="logoutBtn" style="display:none;">تسجيل خروج</button>
+</header>
+
+<main>
+
+<!-- تسجيل / دخول -->
+<section id="authSection" class="active">
+  <h2 id="authTitle">تسجيل الدخول</h2>
+  <div id="errorMsg" class="error-msg" style="display:none;"></div>
+  <input type="email" id="emailInput" placeholder="البريد الإلكتروني" autocomplete="username" required />
+  <input type="password" id="passwordInput" placeholder="كلمة المرور" autocomplete="current-password" required />
+  <button class="btn" id="authBtn">دخول</button>
+  <p class="toggle-text" id="toggleAuth">ليس لديك حساب؟ سجل الآن</p>
+</section>
+
+<!-- لوحة الأدمن -->
+<section id="adminSection" >
+  <nav class="tabs">
+    <button class="tabBtn active" data-tab="postsTab">المنشورات</button>
+    <button class="tabBtn" data-tab="messagesTab">رسائل الطلاب</button>
+    <button class="tabBtn" data-tab="uploadTab">رفع ملفات / رسائل</button>
+  </nav>
+  <div id="postsTab" class="tabContent active">
+    <h2>المنشورات</h2>
+    <div id="postsList"></div>
+  </div>
+  <div id="messagesTab" class="tabContent">
+    <h2>رسائل الطلاب</h2>
+    <div id="messagesList"></div>
+  </div>
+  <div id="uploadTab" class="tabContent">
+    <h2>رفع ملف أو رسالة</h2>
+    <label for="fileUpload">اختر ملف (صورة، فيديو، ملف):</label>
+    <input type="file" id="fileUpload" />
+    <label for="textUpload">أو أكتب رسالة:</label>
+    <textarea id="textUpload" rows="4" placeholder="أكتب رسالة هنا..."></textarea>
+    <button class="btn" id="uploadBtn">نشر</button>
+  </div>
+</section>
+
+<!-- واجهة الطالب -->
+<section id="studentSection">
+  <h2>أهلاً بك في المنصة</h2>
+  <div id="studentPosts"></div>
+
+  <h3>محادثتك مع الأدمن</h3>
+  <div class="chat-container chat-box" id="studentChat"></div>
+  <textarea id="studentMsg" rows="3" placeholder="أكتب رسالة للأدمن"></textarea>
+  <button class="btn" id="sendMsgBtn">إرسال</button>
+</section>
+
+<!-- Firebase App (the core Firebase SDK) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+<script>
+  // تهيئة Firebase - استبدل بالقيم من حسابك في Firebase Console
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const storage = firebase.storage();
+
+  // بيانات الأدمن الثابتة
+  const adminEmail = "admin@agri.com";
+
+  // العناصر
+  const authSection = document.getElementById('authSection');
+  const adminSection = document.getElementById('adminSection');
+  const studentSection = document.getElementById('studentSection');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const authTitle = document.getElementById('authTitle');
+  const authBtn = document.getElementById('authBtn');
+  const toggleAuth = document.getElementById('toggleAuth');
+  const errorMsg = document.getElementById('errorMsg');
+
+  let isLogin = true; // true => تسجيل دخول ، false => تسجيل جديد
+
+  // تبديل بين تسجيل الدخول والتسجيل
+  toggleAuth.addEventListener('click', () => {
+    isLogin = !isLogin;
+    errorMsg.style.display = 'none';
+    if (isLogin) {
+      authTitle.textContent = "تسجيل الدخول";
+      authBtn.textContent = "دخول";
+      toggleAuth.textContent = "ليس لديك حساب؟ سجل الآن";
+      document.getElementById('emailInput').value = "";
+      document.getElementById('passwordInput').value = "";
+    } else {
+      authTitle.textContent = "إنشاء حساب جديد";
+      authBtn.textContent = "تسجيل";
+      toggleAuth.textContent = "لديك حساب؟ سجل الدخول";
+      document.getElementById('emailInput').value = "";
+      document.getElementById('passwordInput').value = "";
+    }
+  });
+
+  authBtn.addEventListener('click', () => {
+    errorMsg.style.display = 'none';
+    const email = document.getElementById('emailInput').value.trim();
+    const password = document.getElementById('passwordInput').value.trim();
+    if (!email || !password) {
+      showError("يرجى إدخال البريد الإلكتروني وكلمة المرور");
+      return;
+    }
+    if (isLogin) {
+      // تسجيل دخول
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          loadUserInterface(user);
+        })
+        .catch((error) => {
+          showError(error.message);
+        });
+    } else {
+      // تسجيل جديد
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          // إنشاء ملف تعريف في قاعدة البيانات
+          db.collection('users').doc(user.uid).set({
+            email: email,
+            role: "student",
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          loadUserInterface(user);
+        })
+        .catch((error) => {
+          showError(error.message);
+        });
+    }
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    auth.signOut().then(() => {
+      showAuth();
+    });
+  });
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.style.display = 'block';
+  }
+
+  // إظهار شاشة تسجيل الدخول
+  function showAuth() {
+    authSection.classList.add('active');
+    adminSection.classList.remove('active');
+    studentSection.classList.remove('active');
+    logoutBtn.style.display = 'none';
+    clearData();
+  }
+
+  // إظهار لوحة الأدمن
+  function showAdmin() {
+    authSection.classList.remove('active');
+    adminSection.classList.add('active');
+    studentSection.classList.remove('active');
+    logoutBtn.style.display = 'inline-block';
+    loadPosts();
+    loadMessages();
+  }
+
+  // إظهار واجهة الطالب
+  function showStudent() {
+    authSection.classList.remove('active');
+    adminSection.classList.remove('active');
+    studentSection.classList.add('active');
+    logoutBtn.style.display = 'inline-block';
+    loadStudentPosts();
+    loadStudentChat();
+  }
+
+  // تحميل بيانات المستخدم بعد تسجيل الدخول
+  function loadUserInterface(user) {
+    if (!user) {
+      showAuth();
+      return;
+    }
+    if (user.email === adminEmail) {
+      showAdmin();
+    } else {
+      showStudent();
+    }
+  }
+
+  // متابعة حالة تسجيل الدخول (بقاء الجلسة)
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      loadUserInterface(user);
+    } else {
+      showAuth();
+    }
+  });
+
+  // مسح المحتوى القديم
+  function clearData() {
+    document.getElementById('postsList').innerHTML = "";
+    document.getElementById('messagesList').innerHTML = "";
+    document.getElementById('studentPosts').innerHTML = "";
+    document.getElementById('studentChat').innerHTML = "";
+    document.getElementById('studentMsg').value = "";
+    document.getElementById('textUpload').value = "";
+    document.getElementById('fileUpload').value = "";
+  }
+
+  // ---- الأدمن: التعامل مع المنشورات ----
+  const postsList = document.getElementById('postsList');
+  const fileUpload = document.getElementById('fileUpload');
+  const textUpload = document.getElementById('textUpload');
+  const uploadBtn = document.getElementById('uploadBtn');
+
+  uploadBtn.addEventListener('click', async () => {
+    const text = textUpload.value.trim();
+    const file = fileUpload.files[0];
+    if (!file && !text) {
+      alert("يرجى اختيار ملف أو كتابة رسالة للنشر.");
+      return;
+    }
+
+    uploadBtn.disabled = true;
+    try {
+      let postData = {
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      if (file) {
+        // رفع الملف إلى Firebase Storage
+        const storageRef = storage.ref();
+        const fileRef = storageRef.child(`uploads/${Date.now()}_${file.name}`);
+        await fileRef.put(file);
+        const fileURL = await fileRef.getDownloadURL();
+
+        // نوع الملف (صورة، فيديو، ملف عادي)
+        let type = "file";
+        if (file.type.startsWith("image")) type = "image";
+        else if (file.type.startsWith("video")) type = "video";
+
+        postData = {...postData, type, name: file.name, url: fileURL };
+      } else {
+        // فقط رسالة نصية
+        postData = {...postData, type: "text", text: text };
+      }
+
+      // إضافة المنشور لقاعدة البيانات
+      await db.collection("posts").add(postData);
+      alert("تم النشر بنجاح!");
+      textUpload.value = "";
+      fileUpload.value = "";
+      loadPosts();
+    } catch (e) {
+      alert("حدث خطأ أثناء النشر: " + e.message);
+    }
+    uploadBtn.disabled = false;
+  });
+
+  // تحميل المنشورات في لوحة الأدمن
+  async function loadPosts() {
+    postsList.innerHTML = "جارِ التحميل...";
+    const snapshot = await db.collection("posts").orderBy("createdAt", "desc").get();
+    if (snapshot.empty) {
+      postsList.innerHTML = "<p>لا توجد منشورات حتى الآن.</p>";
+      return;
+    }
+    postsList.innerHTML = "";
+    snapshot.forEach(doc => {
+      const post = doc.data();
+      const id = doc.id;
+      let contentHtml = "";
+      if (post.type === "image") {
+        contentHtml = `<img src="${post.url}" alt="${post.name}" />`;
+      } else if (post.type === "video") {
+        contentHtml = `<video controls src="${post.url}"></video>`;
+      } else if (post.type === "file") {
+        contentHtml = `<a href="${post.url}" target="_blank" class="download-link" download>${post.name}</a>`;
